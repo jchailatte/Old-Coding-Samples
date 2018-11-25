@@ -1,0 +1,238 @@
+<title>Sycamore Calendar</title>
+<link rel="stylesheet" type="text/css" href="Fig1.css" />
+<script src="https://apis.google.com/js/platform.js" async defer
+	type="text/javascript"></script>
+<head>
+<meta charset="utf-8">
+<style type="text/css">
+* {
+	box-sizing: border-box;
+}
+
+.header input[type=text]
+{
+	float:left;
+	padding:20px;
+	font-size: 20px;
+	margin-left: 20%;
+	margin-top: 20px;
+	height: 20px;
+}
+
+
+p {
+	color: #8c7f74;
+	font-size: 200%;
+	font-family: "American Typewriter", serif;
+	padding-left: 5%;
+}
+
+#name {
+	text-align: center;
+	padding-left: 0%;
+	font-family: "American Typewriter"", serif;
+}
+
+.border {
+	width: 80%;
+	height: 60%;
+	position: absolute;
+	left: 10%;
+	border-style: solid;
+	border-color: #8c7f74;
+}
+
+.form {
+	width: 80%;
+	height: 40%;
+	margin-left: auto;
+	margin-right: auto;
+	background-color: #8c7f74;
+}
+
+.entries {
+	margin-left: 15px;
+	margin-top: 10px;
+	padding-left: 10px;
+	background-color: #8c7f74;
+	border-color: black;
+	border-width: 1px;
+	font-size: 200%;
+	color: white;
+	width: 71%;
+	height: 20%;
+}
+
+.entries::placeholder {
+	color: white;
+}
+
+.dateclass {
+	width: 30%;
+	height: 20px%;
+	margin: 17px;
+	font-size: 200%;
+	margin-right: 80px;
+	border-color: black;
+	background-color: #8c7f74;
+	color: white;
+}
+
+.dateclass.placeholderclass::before {
+	width: 100%;
+	border-color: black;
+	background-color: #8c7f74;
+	content: attr(placeholder);
+	color: white;
+}
+
+.dateclass.placeholderclass:hover::before {
+	width: 0%;
+	margin-top: 18px;
+	content: "";
+	color: white;
+}
+
+#addevent {
+	width: 100px;
+	height: 40px;
+}
+
+#error {
+	color: red;
+	font-size: 20px;
+	width: 10%;
+	display: inline;
+}
+
+</style>
+</head>
+
+<body>
+
+	<div class="header">
+		<button id="title" onclick="redirect2()">Sycamore Calendar</button>
+		<input type="text" placeholder="Search Friends">
+		<img src = "https://png.icons8.com/metro/1600/search.png" height="3%">
+		<button class="tablink" onclick="">Home</button>
+		<button class="tablink" onclick="redirect3()">Profile</button>
+	</div>
+
+	<p>Home</p>
+	<div class="border">
+		<img src="" id="profile" height="150px" width="150px" alt="">
+`		<p id="name"></p>
+		<div class="form">
+			<input type="text" class="entries" id="eventtitle"
+				placeholder="EVENT TITLE"> <input type="date" id="startdate"
+				placeholder="START DATE"
+				onClick="$(this).removeClass('placeholderclass')"
+				class="dateclass placeholderclass"> <input type="date"
+				id="enddate" placeholder="END DATE"
+				onClick="$(this).removeClass('placeholderclass')"
+				class="dateclass placeholderclass">
+
+			<button id="addevent" onclick="submit()">Add Event</button>
+
+			<input type="time" id="starttime" placeholder="START TIME"
+				onClick="$(this).removeClass('placeholderclass')"
+				class="dateclass placeholderclass"> <input type="time"
+				id="endtime" placeholder="END TIME"
+				onClick="$(this).removeClass('placeholderclass')"
+				class="dateclass placeholderclass">
+			<div id="error"></div>
+
+		</div>
+	</div>
+	<div>
+		<script type="text/javascript">
+			document.getElementById("name").innerHTML = sessionStorage
+					.getItem("name");
+			profile.src = sessionStorage.getItem("image");
+
+			var CLIENT_ID = '108599988619-nm9k1p7pidc11q2ot2cqd7299ccg955f.apps.googleusercontent.com';
+			var API_KEY = 'AIzaSyAFX2iTWRC44lJhioi0smV0dRAnuGiH91k';
+			var DISCOVERY_DOCS = [ "https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest" ];
+			var SCOPES = "https://www.googleapis.com/auth/calendar";
+
+			function handleClientLoad() {
+				gapi.load('client:auth2', initClient);
+			}
+
+			function initClient() {
+				gapi.client.init({
+					apiKey : API_KEY,
+					clientId : CLIENT_ID,
+					discoveryDocs : DISCOVERY_DOCS,
+					scope : SCOPES
+				})
+			}
+
+			function redirect2() {
+				window.location
+						.replace("http://localhost:8080/chaijw_CSCI201L_Assignment2/Fig2.html");
+			}
+			function redirect3() {
+				window.location
+						.replace("http://localhost:8080/chaijw_CSCI201L_Assignment2/Fig3.html");
+			}
+
+			function submit() {
+				var title = document.getElementById("eventtitle").value;
+				var startdate = document.getElementById("startdate").value;
+				var enddate = document.getElementById("enddate").value;
+				var starttime = document.getElementById("starttime").value;
+				var endtime = document.getElementById("endtime").value;
+				var ps = document.getElementById("error");
+				var mail = sessionStorage.getItem("email");
+				
+				if (title == "") {
+					ps.innerHTML = "No Title";
+				} else if (startdate == "") {
+					ps.innerHTML = "Invalid Start Date";
+				} else if (enddate == "") {
+					ps.innerHTML = "Invalid End Date";
+				} else if (starttime == "") {
+					ps.innerHTML = "No Start Time";
+				} else if (endtime == "") {
+					ps.innerHTML = "No End Time";
+				} else if( startdate> enddate){
+					ps.innerHTML = "Invalid Dates";					
+				} else if (starttime > endtime) {
+					ps.innerHTML = "Invalid Times";
+				} else {
+					ps.innerHTML = "";
+					var event = {
+						'summary' : title,
+						'start' : {
+							'dateTime' : startdate + 'T' + starttime+ ':00-07:00',
+						},
+						'end' : {
+							'dateTime' : enddate + 'T' + endtime + ':00-07:00',
+						}
+					};
+					
+					console.log(endtime);
+					var request= gapi.client.calendar.events.insert({
+					'calendarId' : mail,
+					'resource' : event});
+
+					request.execute();
+	
+					alert("SUCCESS");			
+				}
+			}
+		</script>
+	</div>
+
+	<script async defer src="https://apis.google.com/js/api.js"
+		onload="this.onload=function(){};handleClientLoad()"
+		onreadystatechange="if (this.readyState === 'complete') this.onload()"
+		type="text/javascript">
+		
+	</script>
+
+	<div class="footer"></div>
+
+</body>
+<html></html>

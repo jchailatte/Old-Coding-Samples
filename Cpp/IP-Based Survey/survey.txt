@@ -1,0 +1,312 @@
+//Program:survey.cpp
+//Author:Jonathan Chai
+//Online Class: cs102
+//Semester: Spring 2016
+//Description:make a survey
+
+#include<iomanip>
+#include<iostream>
+#include<cstring>
+#include<cstdlib>
+#include<string>
+#include<cctype>
+#include<sstream>
+#include<fstream>
+using namespace std;
+
+struct FIELDS
+{
+        string name;
+        string value;
+};
+
+int cnt;
+int survey_txt_cnt;
+string ra(getenv("REMOTE_ADDR"));
+string *data_array;
+int how_many(string);
+int survey_how_many();
+FIELDS *create_FIELDS_array(int);
+void parse(string, FIELDS[]);
+string param(string,FIELDS[]);
+void create_form();
+void save_data();
+void read_data(string[]);
+string qs(getenv("QUERY_STRING"));
+string* create_array();
+void display_result(string[]);
+int IP_not_duplicated();
+
+int main()
+{
+        cout<<"Content-type:text/html\n\n";
+        how_many(qs);
+
+        FIELDS* name_value_pairs=create_FIELDS_array(cnt);
+        parse(qs,name_value_pairs);
+
+        string Apple=param("Apple",name_value_pairs);
+        string Cherry=param("Cherry",name_value_pairs);
+        string Pumpkin=param("Pumpkin",name_value_pairs);
+
+        create_form();
+
+        survey_how_many();
+        string* data_array=create_array();
+
+        int repeat=IP_not_duplicated();
+
+        if(!repeat == 0)
+        {
+                save_data();
+                read_data(data_array);
+                display_result(data_array);
+                cout<<"<a href=\"survey.txt\">Raw Data</a>";
+        }
+        else
+        {
+                read_data(data_array);
+                display_result(data_array);
+                cout<<"You already voted!!<br>\n";
+                cout<<"<a href=\"survey.txt\">Raw Data</a>";
+        }
+return 0;
+}
+
+//**************************************
+//count how many =
+//**************************************
+
+int how_many(string qs)
+{
+        for(int i=0;i<qs.size();i++)
+        if(qs[i] == '=') cnt++;
+        return cnt;
+}
+
+//****************************************
+//return dynamic pointer to array
+//****************************************
+
+FIELDS* create_FIELDS_array(int cnt)
+{
+        FIELDS *a;
+        a=new FIELDS[cnt];
+        return a;
+}
+
+//*****************************************
+//parse function
+//*****************************************
+
+void parse(string qs, FIELDS f_name_value_pairs[])
+{
+
+        string name,value;
+        int start_pos=0,pos;
+        for(int counter=0; counter<cnt;counter++){
+                pos=qs.find("=",start_pos, pos-start_pos);
+                f_name_value_pairs[counter].name=name;
+                start_pos=pos+1;
+                pos=qs.find("&",start_pos);
+                if(pos == string::npos){
+                        pos=qs.length();
+                }
+                value=qs.substr(start_pos,pos=start_pos);
+                f_name_value_pairs[counter].value=value;
+                start_pos=pos+1;
+        }
+}
+
+//*********************************************
+//param function
+//*********************************************
+
+string param(string lookUp,FIELDS f_name_value_pairs[])
+{
+        string f_value;
+        bool found=false;
+        for(int index=0; index<cnt;index++)
+        {
+                if(f_name_value_pairs[index].name !=lookUp);
+                else{
+                        found=true;
+                        f_value=f_name_value_pairs[index].value;
+                }
+        }
+        if(found)
+                return f_value;
+        else
+                return "";
+}
+
+//***************************************************
+//create html form
+//***************************************************
+
+void create_form()
+{
+        cout<<"<html><head><title>Survey Vote</title></head>"<<
+                "<body><body bgcolor=\"khaki\">\n"<<
+                "<form action=\"survey.cgi\"method=\"GET\">\n"<<
+                "<b><font size=\"+3\">What Kind of Pie Do You Like?<br><br></font></b>\n"<<
+                "       <label for=\"vote\">Apple</label>\n"<<
+                "       <input name=\"vote\"value=\"apple\"type=\"radio\"></td><br>\n"<<
+                "       <label for=\"vote\">Cherry</label>\n"<<
+                "       <input name=\"vote\"value=\"cherry\"type=\"radio\"></td><br>\n"<<
+                "       <label for=\"vote\">Pumpkin</label>\n"<<
+                "       <input name=\"vote\"value=\"pumpkin\"type=\"radio\"></td><br>\n"<<
+                "  <p><input type=\"submit\"value=\"Submit\">\n"<<
+                "</form>\n"<<
+                "</body>\n"<<
+                "</html>\n";
+
+
+}
+
+//*********************************************
+//save answer and IP to survey.txt
+//*********************************************
+
+void save_data()
+{
+        ofstream myfile;
+        myfile.open("survey.txt",ios::app);
+        if(!myfile.fail())
+        {
+                string answer;
+                answer=qs.erase(0,5);
+                if(answer.length()!=0)
+                {
+                        myfile<<answer<<"|"<<ra<<"\n";
+                        myfile.close();
+                }
+                else
+                {
+                        myfile.close();
+                }
+        }
+        else
+        {
+                myfile.close();
+        }
+}
+
+//*********************************************
+//next 3 functions are for read_data
+//********************************************
+
+int survey_how_many()
+{
+        int records_count=0;
+        ifstream myfile;
+        myfile.open("survey.txt");
+                while(!myfile.fail())
+                {
+                        string data;
+                        getline(myfile,data);
+                        records_count++;
+                }
+        myfile.close();
+        return survey_txt_cnt=records_count;
+}
+
+string* create_array()
+{
+        string *b;
+        b=new string[survey_txt_cnt];
+        return b;
+}
+
+void read_data(string data_array[])
+{
+        ifstream myfile;
+        string data;
+        myfile.open("survey.txt");
+        if(!myfile.fail())
+        {
+        myfile.clear();
+        myfile.seekg(0L,ios::beg);
+
+        for(int index=0;index<survey_txt_cnt;index++)
+        {
+                getline(myfile,data);
+                data_array[index]=data;
+        }
+        }
+        myfile.close();
+}
+
+//*****************************************
+//create table
+//****************************************
+
+void display_result(string data_array[])
+{
+        int tally_array[2];
+
+        for(int a=0;a<3;a++)
+        {
+                tally_array[a]=0;
+        }
+
+        for(int counter=0;counter<survey_txt_cnt;counter++)
+        {
+        string answer;
+        int pos=data_array[counter].find("|");
+        answer=data_array[counter].substr(0,pos);
+
+                if(answer == "apple")
+                {
+                        tally_array[0]++;
+                }
+                else if(answer == "cherry")
+                {
+                        tally_array[1]++;
+                }
+                else if(answer == "pumpkin")
+                {
+                        tally_array[2]++;
+                }
+        }
+
+cout<<" <table border=\"1\" style=\"width:10%\">"<<
+        "<tr>"<<
+        "       <td>Apple</td>"<<
+        "       <td>"<<tally_array[0]<<"</td>"<<
+        "       <td>"<<string(tally_array[0],'*')<<"</td>"<<
+        "</tr>"<<
+        "<tr>"<<
+        "       <td>Cherry</td>"<<
+        "       <td>"<<tally_array[1]<<"</td>"<<
+        "       <td>"<<string(tally_array[1],'*')<<"</td>"<<
+        "</tr>"<<
+        "<tr>"<<
+        "       <td>Pumpkin</td>"<<
+        "       <td>"<<tally_array[2]<<"</td>"<<
+        "       <td>"<<string(tally_array[2],'*')<<"</td>"<<
+        " </tr>";
+        " </table>";
+}
+
+//***************************************************
+//prevent IP duplication
+//***************************************************
+int IP_not_duplicated()
+{
+        ifstream myfile;
+        myfile.open("survey.txt");
+        for(int index=0;index<survey_txt_cnt;index++)
+        {
+                string data;
+                getline(myfile,data);
+                int pos=data.find("|");
+                string ip=data.erase(0,pos+1);
+
+                if(ra == ip)
+                {
+                        return 0;
+                }
+        }
+return 1;
+}

@@ -1,0 +1,55 @@
+<title>Sycamore Calendar</title>
+<link rel="stylesheet" type="text/css" href="Fig1.css" />
+<script src="https://apis.google.com/js/platform.js" async defer
+	type="text/javascript"></script>
+<script src="https://apis.google.com/js/platform.js?onload=renderButton"
+	async defer type="text/javascript"></script>
+
+<head>
+<meta charset="utf-8">
+<meta name="google-signin-client_id"
+	content="108599988619-nm9k1p7pidc11q2ot2cqd7299ccg955f.apps.googleusercontent.com">
+<meta name="google-signin-scope" content="profile email https://www.googleapis.com/auth/calendar">
+
+<style type="text/css">
+* {
+	box-sizing: border-box;
+}
+</style>
+</head>
+
+<body>
+
+	<div class="header"></div>
+	<div class="nav">
+		<br><br><br>
+		<br> <img
+			src="http://pluspng.com/img-png/sycamore-tree-leaf-png--1000.png"
+			alt="Leaf" height="40%">
+	</div>
+
+	<div class="logo">
+		<br><br>
+		<h1>Sycamore Calendar</h1>
+		<div class="g-signin2" data-onsuccess="onSignIn"></div>
+	</div>
+
+	<script type="text/javascript">
+	// Client ID and API key from the Developer Console
+	function onSignIn(googleUser) {	
+        gapi.auth2.getAuthInstance().signIn();
+        var profile = googleUser.getBasicProfile();
+  		sessionStorage.setItem("name",profile.getName());
+		sessionStorage.setItem("image",profile.getImageUrl());
+		sessionStorage.setItem("email",profile.getEmail());
+		
+		window.location.replace("http://localhost:8080/chaijw_CSCI201L_Assignment2/Fig2.html");	
+	}
+	
+	</script>
+
+
+	<div class="footer"></div>
+
+</body>
+<html></html>

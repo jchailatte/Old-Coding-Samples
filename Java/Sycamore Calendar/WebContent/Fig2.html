@@ -1,0 +1,75 @@
+<title>Sycamore Calendar</title>
+<link rel = "stylesheet" type = "text/css" href = "Fig1.css" />   
+<script src="https://apis.google.com/js/platform.js?onload=renderButton"
+	async defer type="text/javascript"></script>
+<head>
+<meta charset="utf-8">
+<meta name="google-signin-client_id"
+	content="108599988619-nm9k1p7pidc11q2ot2cqd7299ccg955f.apps.googleusercontent.com">
+<style>
+* {
+    box-sizing: border-box;
+}
+
+.header input[type=text]
+{
+	float:left;
+	padding:20px;
+	font-size: 20px;
+	margin-left: 45%;
+	margin-top: 20px;
+	height: 20px;
+}
+
+</style>
+</head>
+
+<body>
+
+		<div class = "header">
+			<input type="text" placeholder="Search Friends">
+			<img src = "https://png.icons8.com/metro/1600/search.png" height="3%">
+			<button class="tablink" onclick="redirect4()">Home</button>
+			<button class="tablink" onclick="redirect3()">Profile</button>
+		</div>
+  		
+  		<div class = "nav">
+  			<br><br><br><br>
+				<img src="http://pluspng.com/img-png/sycamore-tree-leaf-png--1000.png" alt = "Leaf"
+	  	  		height = "40%">
+  		</div>
+  
+  		<div class = "logo">
+  			<br><br>
+    		<h1>Sycamore Calendar</h1>
+			<div class="g-signin2" onclick="signOut()"></div>
+  		</div>
+	
+	<div>
+	<script>	
+	
+		function redirect4()
+		{
+	  		window.location.replace("http://localhost:8080/chaijw_CSCI201L_Assignment2/Fig4.html");
+		}
+		function redirect3()
+		{
+	  		window.location.replace("http://localhost:8080/chaijw_CSCI201L_Assignment2/Fig3.html");
+		}
+		 function signOut() {
+		    var auth2 = gapi.auth2.getAuthInstance();
+		    auth2.signOut().then(function () {
+		      console.log('User signed out.');
+		  	  window.location.replace("http://localhost:8080/chaijw_CSCI201L_Assignment2/Fig1.html");
+
+		    });
+		  }
+    
+</script>
+</div>
+    
+		<div class = "footer">
+		</div>
+
+</body>
+</html>

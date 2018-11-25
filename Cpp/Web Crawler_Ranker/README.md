@@ -1,0 +1,21 @@
+-Makefile
+-
+-make search
+-make crawler
+-
+-setutility.h
+-
+-contains the templated setunion and setintersect functions
+-
+-readconfig.h
+-
+-contains the functions that read the config file and passes a map back
+-
+-crawler.cpp
+-
+-contains the function that runs the crawler
+-
+-database.h search.h search.cpp searchfunc.cpp datafunc.cpp pagerank.cpp
+-
+-contains the pagerank and search engine
+-
